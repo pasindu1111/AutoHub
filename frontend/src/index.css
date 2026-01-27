@@ -1,0 +1,167 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+/* Tailwind CSS Directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Base Styles */
+@layer base {
+  :root {
+    font-family: 'Inter', 'Plus Jakarta Sans', system-ui, sans-serif;
+    color: #1e293b;
+    background-color: #f8fafc;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: #f8fafc;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  #root {
+    min-height: 100vh;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Custom Component Styles */
+@layer components {
+  /* Professional Car Card Styles */
+  .car-card {
+    @apply bg-white rounded-card shadow-card hover:shadow-card-hover transition-all duration-300;
+  }
+
+  .car-card-featured {
+    @apply bg-white rounded-card-lg shadow-card-lg hover:shadow-primary-lg transition-all duration-300;
+  }
+
+  /* Professional Button Styles */
+  .btn-primary {
+    @apply bg-primary-500 text-white px-6 py-3 rounded-lg font-semibold shadow-primary hover:bg-primary-600 hover:shadow-primary-lg transition-all duration-200;
+  }
+
+  .btn-secondary {
+    @apply bg-slate-100 text-slate-700 px-6 py-3 rounded-lg font-semibold hover:bg-slate-200 transition-all duration-200;
+  }
+
+  /* Professional Input Styles */
+  .input-field {
+    @apply border border-slate-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200;
+  }
+
+  /* Text Styles */
+  .text-heading {
+    @apply font-display font-bold text-slate-900;
+  }
+
+  .text-body {
+    @apply font-sans text-slate-600;
+  }
+
+  /* Container Styles */
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}
+
+/* Custom Utility Classes */
+@layer utilities {
+  /* Gradient Text */
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent;
+  }
+
+  /* Glass Effect */
+  .glass {
+    @apply bg-white/80 backdrop-blur-lg border border-white/20;
+  }
+
+  /* Hover Scale Animation */
+  .hover-scale {
+    @apply transform transition-transform duration-300 hover:scale-105;
+  }
+
+  /* Professional Shadow on Hover */
+  .hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover;
+  }
+
+  /* Animated Gradient for Logo */
+  .animate-gradient {
+    background-size: 200% auto;
+    animation: gradient-shift 3s ease infinite;
+  }
+
+  @keyframes gradient-shift {
+    0%, 100% {
+      background-position: 0% center;
+    }
+    50% {
+      background-position: 100% center;
+    }
+  }
+
+  /* Fade In Up Animation */
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+  }
+
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Admin Dashboard Styles */
+  .admin-table .ant-table {
+    font-size: 14px;
+  }
+
+  .admin-table .ant-table-thead > tr > th {
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    font-weight: 600;
+    color: #475569;
+    padding: 12px 16px;
+  }
+
+  .admin-table .ant-table-tbody > tr > td {
+    padding: 16px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .admin-table .ant-table-tbody > tr:hover > td {
+    background: #f8fafc;
+  }
+
+  .admin-tabs .ant-tabs-nav {
+    padding: 0 24px;
+    margin: 0;
+  }
+
+  .admin-tabs .ant-tabs-tab {
+    padding: 16px 4px;
+    font-weight: 500;
+  }
+
+  .admin-tabs .ant-tabs-tab-active {
+    font-weight: 600;
+  }
+}
