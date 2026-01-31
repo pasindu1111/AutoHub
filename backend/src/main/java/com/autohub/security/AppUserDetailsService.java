@@ -1,7 +1,6 @@
 package com.autohub.security;
 
 import com.autohub.entity.AppUser;
-import com.autohub.repository.AppUserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
