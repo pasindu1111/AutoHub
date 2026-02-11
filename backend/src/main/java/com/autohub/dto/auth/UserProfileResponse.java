@@ -1,5 +1,6 @@
 package com.autohub.dto.auth;
 
+import com.autohub.entity.Role;
 import jakarta.validation.constraints.NotNull;
 
 public record UserProfileResponse(

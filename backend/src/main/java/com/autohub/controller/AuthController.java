@@ -1,7 +1,13 @@
 package com.autohub.controller;
 
 import com.autohub.dto.ApiResponse;
+import com.autohub.dto.auth.RegisterRequest;
+import com.autohub.dto.auth.UserProfileResponse;
+import com.autohub.dto.security.AuthTokens;
 import com.autohub.entity.AppUser;
+import com.autohub.security.JwtTokenService;
+import com.autohub.security.SecurityCookieService;
+import com.autohub.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -16,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/auth")  // ✅ FIXED: Removed duplicate /api prefix (context-path handles it)
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -38,32 +44,32 @@ public class AuthController {
     public ResponseEntity<ApiResponse<Void>> login(@RequestBody LoginRequest request,
                                                    jakarta.servlet.http.HttpServletResponse response) {
         try {
-            // Raw password passed directly to authentication token (NOT hashed)
-            // AuthenticationManager called to verify credentials
+            // ✅ VERIFIED: Raw password passed directly to authentication token (NOT hashed)
+            // ✅ VERIFIED: AuthenticationManager called to verify credentials
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            request.email(),      // Email from request
-                            request.password()    // Raw password (BCrypt comparison done by AuthenticationManager)
+                        request.email(),      // ✅ Email from request
+                        request.password()    // ✅ Raw password (BCrypt comparison done by AuthenticationManager)
                     )
             );
-
+            
             // Extract role from authorities
             String role = authentication.getAuthorities().stream()
                     .findFirst()
                     .map(Object::toString)
                     .orElse("");
-
+            
             // Generate JWT tokens with role claim
             AuthTokens tokens = jwtTokenService.issueTokens(authentication.getName(), Map.of("role", role));
             jwtTokenService.addAuthCookies(tokens, response);
-
+            
             return ResponseEntity.ok(ApiResponse.success("Login successful", null));
-
+            
         } catch (org.springframework.security.authentication.InternalAuthenticationServiceException e) {
-            // Specific logging for InternalAuthenticationServiceException
+            // ✅ ENHANCED: Specific logging for InternalAuthenticationServiceException
             // This usually indicates a UserDetailsService mapping error
             System.err.println("═════════════════════════════════════════════════════════");
-            System.err.println("CRITICAL ERROR: InternalAuthenticationServiceException");
+            System.err.println("❌ CRITICAL ERROR: InternalAuthenticationServiceException");
             System.err.println("═════════════════════════════════════════════════════════");
             System.err.println("This error typically indicates:");
             System.err.println("  1. UserDetailsService threw an unexpected exception");
@@ -79,71 +85,71 @@ public class AuthController {
             System.err.println("Stack Trace:");
             e.printStackTrace();
             System.err.println("═════════════════════════════════════════════════════════");
-
+            
             return ResponseEntity.status(500).body(
-                    ApiResponse.failure("Authentication service error. Please check server logs.")
+                ApiResponse.failure("Authentication service error. Please check server logs.")
             );
-
+            
         } catch (org.springframework.security.authentication.BadCredentialsException e) {
-            // Specific logging for wrong password/username
-            System.err.println("   Login Failed: Bad Credentials");
+            // ✅ ENHANCED: Specific logging for wrong password/username
+            System.err.println("⚠️  Login Failed: Bad Credentials");
             System.err.println("   Email: " + request.email());
             System.err.println("   Reason: Invalid email or password");
-
+            
             return ResponseEntity.status(401).body(
-                    ApiResponse.failure("Invalid email or password")
+                ApiResponse.failure("Invalid email or password")
             );
-
+            
         } catch (org.springframework.security.core.userdetails.UsernameNotFoundException e) {
-            // Specific logging for user not found
-            System.err.println("   Login Failed: User Not Found");
+            // ✅ ENHANCED: Specific logging for user not found
+            System.err.println("⚠️  Login Failed: User Not Found");
             System.err.println("   Email: " + request.email());
             System.err.println("   Reason: No user with this email exists");
-
+            
             return ResponseEntity.status(401).body(
-                    ApiResponse.failure("Invalid email or password")
+                ApiResponse.failure("Invalid email or password")
             );
-
+            
         } catch (org.springframework.security.authentication.DisabledException e) {
-            // Account disabled
-            System.err.println("️   Login Failed: Account Disabled");
+            // ✅ ENHANCED: Account disabled
+            System.err.println("⚠️  Login Failed: Account Disabled");
             System.err.println("   Email: " + request.email());
-
+            
             return ResponseEntity.status(401).body(
-                    ApiResponse.failure("Account is disabled")
+                ApiResponse.failure("Account is disabled")
             );
-
+            
         } catch (org.springframework.security.authentication.LockedException e) {
-            // Account locked
-            System.err.println("️   Login Failed: Account Locked");
+            // ✅ ENHANCED: Account locked
+            System.err.println("⚠️  Login Failed: Account Locked");
             System.err.println("   Email: " + request.email());
-
+            
             return ResponseEntity.status(401).body(
-                    ApiResponse.failure("Account is locked")
+                ApiResponse.failure("Account is locked")
             );
-
+            
         } catch (org.springframework.security.authentication.AccountExpiredException e) {
-            // Account expired
-            System.err.println(" ️  Login Failed: Account Expired");
+            // ✅ ENHANCED: Account expired
+            System.err.println("⚠️  Login Failed: Account Expired");
             System.err.println("   Email: " + request.email());
-
+            
             return ResponseEntity.status(401).body(
-                    ApiResponse.failure("Account has expired")
+                ApiResponse.failure("Account has expired")
             );
-
+            
         } catch (org.springframework.security.authentication.CredentialsExpiredException e) {
-            // Password expired
-            System.err.println(" ️  Login Failed: Credentials Expired");
+            // ✅ ENHANCED: Password expired
+            System.err.println("⚠️  Login Failed: Credentials Expired");
             System.err.println("   Email: " + request.email());
-
+            
             return ResponseEntity.status(401).body(
-                    ApiResponse.failure("Password has expired")
+                ApiResponse.failure("Password has expired")
             );
-
+            
         } catch (Exception e) {
-            // Catch-all for unexpected errors
+            // ✅ ENHANCED: Catch-all for unexpected errors
             System.err.println("═════════════════════════════════════════════════════════");
-            System.err.println(" UNEXPECTED LOGIN ERROR");
+            System.err.println("❌ UNEXPECTED LOGIN ERROR");
             System.err.println("═════════════════════════════════════════════════════════");
             System.err.println("  Type: " + e.getClass().getName());
             System.err.println("  Message: " + e.getMessage());
@@ -151,9 +157,9 @@ public class AuthController {
             System.err.println("Stack Trace:");
             e.printStackTrace();
             System.err.println("═════════════════════════════════════════════════════════");
-
+            
             return ResponseEntity.status(500).body(
-                    ApiResponse.failure("An unexpected error occurred. Please check server logs.")
+                ApiResponse.failure("An unexpected error occurred. Please check server logs.")
             );
         }
     }

@@ -1,6 +1,9 @@
 package com.autohub.controller;
 
 import com.autohub.dto.ApiResponse;
+import com.autohub.dto.testdrive.TestDriveRequest;
+import com.autohub.dto.testdrive.TestDriveResponse;
+import com.autohub.mapper.TestDriveMapper;
 import com.autohub.service.TestDriveService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/test-drives")
+@RequestMapping("/test-drives") // ✅ FIXED: Removed duplicate /api prefix
 public class TestDriveController {
+
     private final TestDriveService testDriveService;
     private final TestDriveMapper testDriveMapper;
 
@@ -43,7 +47,7 @@ public class TestDriveController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<ApiResponse<Void>> cancelTestDrive(@AuthenticationPrincipal UserDetails userDetails,
-                                                             @PathVariable Long id) {
+            @PathVariable Long id) {
         try {
             testDriveService.cancelTestDrive(id, userDetails.getUsername());
             return ResponseEntity.ok(ApiResponse.success("Booking cancelled successfully", null));
@@ -51,4 +55,5 @@ public class TestDriveController {
             return ResponseEntity.badRequest().body(ApiResponse.failure(e.getMessage()));
         }
     }
+
 }

@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/autohub
-    username: root
-    password: root
+    url: ${DB_URL:jdbc:mysql://localhost:3306/autohub}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       connection-timeout: 30000
@@ -13,7 +13,6 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-    # Added to disable the warning in your logs and improve performance
     open-in-view: false
     properties:
       hibernate:
@@ -26,10 +25,10 @@ spring:
       max-request-size: 50MB
 
   mail:
-    host: smtp-relay.brevo.com
-    port: 587
-    username: a0f64c001@smtp-brevo.com
-    password:
+    host: ${SMTP_HOST:smtp-relay.brevo.com}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USERNAME:}
+    password: ${SMTP_PASSWORD:}
     protocol: smtp
     properties:
       mail:
@@ -38,7 +37,6 @@ spring:
           starttls:
             enable: true
             required: true
-          # Connection timeouts for reliable email delivery
           timeout: 5000
           writeTimeout: 5000
           connectiontimeout: 5000
@@ -49,18 +47,17 @@ server:
     context-path: /api
   max-http-request-header-size: 16KB
 
-# Custom properties for your FileService
 storage:
-  upload-dir: "uploads"
+  upload-dir: ${UPLOAD_DIR:uploads}
 
-# Security Configuration for JWT
 security:
   jwt:
-    issuer: autohub
-    secret: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b85554625b5a76575519830575390708553250232407513518298750244765373676"
-    access-token-ttl-minutes: 60
-    refresh-token-ttl-days: 7
+    issuer: ${JWT_ISSUER:autohub}
+    secret: ${JWT_SECRET}
+    access-token-ttl-minutes: ${JWT_ACCESS_TTL:60}
+    refresh-token-ttl-days: ${JWT_REFRESH_TTL:7}
+
   cookie:
-    domain: "localhost"
-    secure: false
-    same-site: "Lax"
+    domain: ${COOKIE_DOMAIN:localhost}
+    secure: ${COOKIE_SECURE:false}
+    same-site: ${COOKIE_SAMESITE:Lax}

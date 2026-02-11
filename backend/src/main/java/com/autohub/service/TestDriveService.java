@@ -1,16 +1,23 @@
 package com.autohub.service;
 
+import com.autohub.dto.testdrive.TestDriveRequest;
 import com.autohub.entity.AppUser;
+import com.autohub.entity.Car;
 import com.autohub.entity.TestDrive;
+import com.autohub.entity.TestDriveStatus;
+import com.autohub.event.TestDriveStatusChangedEvent;
+import com.autohub.repository.AppUserRepository;
+import com.autohub.repository.CarRepository;
 import com.autohub.repository.TestDriveRepository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 public class TestDriveService {
+
     private final TestDriveRepository testDriveRepository;
     private final CarRepository carRepository;
     private final AppUserRepository appUserRepository;
@@ -28,6 +35,7 @@ public class TestDriveService {
         this.eventPublisher = eventPublisher;
         this.notificationService = notificationService;
     }
+
     @Transactional
     public TestDrive bookTestDrive(TestDriveRequest request, String customerEmail) {
         Car car = carRepository.findByIdAndDeletedFalseAndStatus(request.carId(), com.autohub.entity.CarStatus.AVAILABLE)
@@ -90,20 +98,20 @@ public class TestDriveService {
     public void cancelTestDrive(Long id, String customerEmail) {
         TestDrive testDrive = testDriveRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Test drive not found"));
-
+        
         // Verify ownership
         if (!testDrive.getCustomer().getEmail().equals(customerEmail)) {
             throw new IllegalArgumentException("You can only cancel your own bookings");
         }
-
-        // Only PENDING bookings can be canceled
+        
+        // Only PENDING bookings can be cancelled
         if (testDrive.getStatus() != TestDriveStatus.PENDING) {
             throw new IllegalArgumentException("Only PENDING bookings can be cancelled");
         }
-
+        
         testDrive.setStatus(TestDriveStatus.REJECTED);
         testDriveRepository.save(testDrive);
-
+        
         // Send cancellation email notification (async)
         notificationService.notifyCancellation(testDrive);
     }
