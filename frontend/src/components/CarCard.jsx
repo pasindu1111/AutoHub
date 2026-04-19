@@ -29,7 +29,7 @@ export default function CarCard({ car, onFavorite }) {
           {imageUrl ? (
             <div
               className="h-full w-full bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
-              style={{ backgroundImage: `url(${imageUrl})` }}
+              style={{ backgroundImage: `url("${imageUrl}")` }}
             />
           ) : (
             <div className="h-full w-full flex items-center justify-center bg-slate-100">

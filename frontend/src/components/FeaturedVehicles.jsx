@@ -79,7 +79,7 @@ export default function FeaturedVehicles() {
                   <div
                     className="h-full w-full bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
                     style={{
-                      backgroundImage: `url(${getImageUrl(car.primaryImage)})`
+                      backgroundImage: `url("${getImageUrl(car.primaryImage)}")`
                     }}
                   />
                 ) : (

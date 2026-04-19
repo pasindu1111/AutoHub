@@ -2,15 +2,16 @@ import axios from 'axios'
 import { message } from 'antd'
 import useAuthStore from '../store/authStore'
 
-// Base URL configuration for easier updates
-const BASE_URL = 'http://localhost:8080/api'
+// Base URL — keep in sync with imageUtils (uses same export for static file URLs)
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
 
 const apiClient = axios.create({
   baseURL: BASE_URL,
   withCredentials: true, // Crucial for sending/receiving HttpOnly cookies
-  headers: {
-    'Content-Type': 'application/json'
-  }
+  // ✅ Do NOT set a default Content-Type here.
+  // For JSON requests, Axios sets it automatically.
+  // For multipart/FormData requests, the browser must set it (with the boundary).
+  // A hardcoded default would bleed into FormData requests and strip the boundary.
 })
 
 // Response interceptor to handle 401 (Unauthorized) and 403 (Forbidden)
@@ -88,3 +89,6 @@ apiClient.interceptors.request.use(
 )
 
 export default apiClient
+
+/** Full API root (includes /api context path). Use for uploads and other absolute URLs. */
+export const API_BASE_URL = BASE_URL

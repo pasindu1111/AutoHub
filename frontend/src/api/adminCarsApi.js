@@ -17,9 +17,10 @@ export const adminCarsApi = {
   },
 
   createCar: async (formData) => {
-    const response = await apiClient.post('/admin/cars', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    })
+    // ✅ Do NOT set Content-Type manually — Axios must auto-generate it
+    // with the multipart boundary (e.g. 'multipart/form-data; boundary=----...')
+    // Manually setting 'multipart/form-data' strips the boundary → Spring 400/403
+    const response = await apiClient.post('/admin/cars', formData)
     return response.data
   },
 
@@ -44,9 +45,8 @@ export const adminCarsApi = {
   },
 
   addImages: async (id, formData) => {
-    const response = await apiClient.post(`/admin/cars/${id}/images`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    })
+    // ✅ Same fix: let Axios auto-set boundary for multipart
+    const response = await apiClient.post(`/admin/cars/${id}/images`, formData)
     return response.data
   },
 

@@ -1,23 +1,20 @@
-/**
- * Image URL utility for constructing proper image URLs with API prefix
- * 
- * The backend serves images from /uploads/** but requires /api prefix due to context-path
- * configuration in application.yml (server.servlet.context-path: /api)
- */
-
-const BASE_URL = 'http://localhost:8080/api'
+import { API_BASE_URL } from '../api/axiosConfig'
 
 /**
- * Constructs the full URL for an image path
- * @param {string} imagePath - The relative image path (e.g., "uuid-filename.jpg")
- * @returns {string|null} Full image URL or null if no path provided
+ * Encode each path segment so spaces, parentheses, etc. work in browsers.
+ * Unencoded spaces break CSS `url(...)` (used on car cards) and can confuse URL parsing.
  */
-export const getImageUrl = (imagePath) => {
-    if (!imagePath) return null
-    return `${BASE_URL}/uploads/${imagePath}`
+function encodeUploadPath(imagePath) {
+  return imagePath
+    .split(/[/\\]/)
+    .map((segment) => encodeURIComponent(segment))
+    .join('/')
 }
 
 /**
- * For production deployment, update BASE_URL to match your production API endpoint
- * Example: const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api'
+ * Full URL for a stored upload filename/path (served at /api/uploads/**).
  */
+export const getImageUrl = (imagePath) => {
+  if (!imagePath) return null
+  return `${API_BASE_URL}/uploads/${encodeUploadPath(imagePath)}`
+}

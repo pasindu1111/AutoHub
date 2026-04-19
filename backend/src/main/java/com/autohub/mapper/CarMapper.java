@@ -28,7 +28,7 @@ public interface CarMapper {
                 .filter(CarImage::isPrimaryImage)
                 .findFirst()
                 .map(CarImage::getImagePath)
-                .orElse(null);
+                .orElseGet(() -> images.get(0).getImagePath());
     }
 
     default List<CarImageResponse> mapImages(List<CarImage> images) {
