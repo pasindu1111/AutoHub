@@ -39,6 +39,9 @@ public class SecurityConfig {
                         // 2. Allow all Auth endpoints (Note: prefix is added in application.yml)
                         .requestMatchers("/auth/**").permitAll()
 
+                        // Health check endpoint (DB + disk status)
+                        .requestMatchers("/actuator/health").permitAll()
+
                         // 🐛 DEBUG ONLY - Remove in production
                         .requestMatchers("/debug/**").permitAll()
 

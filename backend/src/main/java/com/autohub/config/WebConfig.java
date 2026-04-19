@@ -2,6 +2,7 @@ package com.autohub.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.CacheControl;
 import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -29,8 +30,9 @@ public class WebConfig implements WebMvcConfigurer {
         String location = "file:///" + normalizedPath;
 
         // Single handler for /uploads/** (accessed via /api/uploads/** due to
-        // context-path)
+        // context-path). noCache() prevents stale images during local development.
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations(location);
+                .addResourceLocations(location)
+                .setCacheControl(CacheControl.noCache());
     }
 }
